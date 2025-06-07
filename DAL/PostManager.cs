@@ -51,4 +51,13 @@ public class PostManager
             await _utterlyContext.SaveChangesAsync();
         }
     }
+
+    public async Task<List<UtterlyPost>> GetPostsByThreadAsync(int threadId)
+    {
+        if (_posts.Count == 0)
+        {
+            _posts = await _utterlyContext.UtterlyPosts.ToListAsync();
+        }
+        return _posts.Where(p => p.ThreadId == threadId).ToList();
+    }
 }

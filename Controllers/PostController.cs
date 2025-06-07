@@ -17,6 +17,7 @@ public class PostController : Controller
     [HttpGet]
     public async Task<List<UtterlyPost>> GetUtterlyPosts()
     {
+
         return await _postManager.GetPostsAsync();
     }
     [HttpGet("{id}")]
@@ -71,5 +72,11 @@ public class PostController : Controller
     {
         var posts = await _postManager.GetPostsAsync();
         return posts.Where(p => p.ParentPostId == parentId).ToList();
+    }
+
+    [HttpGet("Thread/{threadId}")]
+    public async Task<List<UtterlyPost>> GetPostsByThread(int threadId)
+    {
+        return await _postManager.GetPostsByThreadAsync(threadId);
     }
 }
