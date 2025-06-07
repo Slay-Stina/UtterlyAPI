@@ -1,0 +1,6 @@
+@UtterlyPostAPI_HostAddress = http://localhost:5277
+
+GET {{UtterlyPostAPI_HostAddress}}/post/
+Accept: application/json
+
+###
