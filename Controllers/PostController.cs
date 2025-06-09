@@ -17,7 +17,6 @@ public class PostController : Controller
     [HttpGet]
     public async Task<List<UtterlyPost>> GetUtterlyPosts()
     {
-
         return await _postManager.GetPostsAsync();
     }
     [HttpGet("{id}")]
@@ -29,12 +28,8 @@ public class PostController : Controller
     [HttpPost]
     public async Task<IActionResult> CreatePost([FromBody] UtterlyPost post)
     {
-        if (post == null)
-        {
-            return BadRequest("Post cannot be null.");
-        }
         await _postManager.CreatePostAsync(post);
-        return CreatedAtAction(nameof(GetPostById), new { id = post.Id }, post);
+        return Ok(post);
     }
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdatePost(int id, [FromBody] UtterlyPost post)
@@ -46,7 +41,7 @@ public class PostController : Controller
     public async Task<IActionResult> DeletePost(int id)
     {
         await _postManager.DeletePostAsync(id);
-        return Ok($"Post with ID {id} deleted successfully.");
+        return Ok();
     }
     [HttpGet("search")]
     public async Task<List<UtterlyPost>> SearchPosts([FromQuery] string query)
