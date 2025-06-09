@@ -23,24 +23,16 @@ public class PostManager
         }
         return _posts;
     }
-    public async Task<UtterlyPost?> GetPostByIdAsync(int id)
-    {
-        return await _utterlyContext.UtterlyPosts.FindAsync(id);
-    }
     public async Task CreatePostAsync([FromBody] UtterlyPost post)
     {
         if (post == null) throw new ArgumentNullException(nameof(post));
         _utterlyContext.UtterlyPosts.Add(post);
         await _utterlyContext.SaveChangesAsync();
     }
-    public async Task UpdatePostAsync(int id, [FromBody] UtterlyPost post)
+    public async Task UpdatePostAsync(int id, UtterlyPost post)
     {
-        var existingPost = _utterlyContext.UtterlyPosts.FirstOrDefault(p => p.Id == id);
-        if (existingPost != null)
-        {
-            existingPost.Content = post.Content;
-            _utterlyContext.UtterlyPosts.Update(existingPost);
-        }
+        _utterlyContext.Update(post);
+        await _utterlyContext.SaveChangesAsync();
     }
     public async Task DeletePostAsync(int id)
     {
@@ -48,8 +40,8 @@ public class PostManager
         if (post != null)
         {
             _utterlyContext.UtterlyPosts.Remove(post);
-            await _utterlyContext.SaveChangesAsync();
         }
+        await _utterlyContext.SaveChangesAsync();
     }
 
     public async Task<List<UtterlyPost>> GetPostsByThreadAsync(int threadId)

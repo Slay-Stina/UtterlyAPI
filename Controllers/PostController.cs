@@ -32,10 +32,9 @@ public class PostController : Controller
         return Ok(post);
     }
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdatePost(int id, [FromBody] UtterlyPost post)
+    public async Task UpdatePost(int id, [FromBody] UtterlyPost post)
     {
         await _postManager.UpdatePostAsync(id, post);
-        return Ok(post);
     }
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePost(int id)
