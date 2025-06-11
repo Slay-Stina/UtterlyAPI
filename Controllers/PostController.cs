@@ -32,9 +32,31 @@ public class PostController : Controller
         return Ok(post);
     }
     [HttpPut("{id}")]
-    public async Task UpdatePost(int id, [FromBody] UtterlyPost post)
+    public async Task<IActionResult> UpdatePost(int id, [FromBody] UtterlyPost post)
     {
-        await _postManager.UpdatePostAsync(id, post);
+        try
+        {
+            if (id != post.Id)
+                return BadRequest("Post ID mismatch");
+
+            var postToUpdate = await GetPostById(id);
+
+            if (postToUpdate == null)
+                return NotFound($"Post with Id = {id} not found");
+
+            postToUpdate.Content = post.Content;
+            postToUpdate.ParentPostId = post.ParentPostId;
+            postToUpdate.ThreadId = post.ThreadId;
+            postToUpdate.UserId = post.UserId;
+            postToUpdate.CreatedAt = post.CreatedAt;
+
+            return await _postManager.UpdatePostAsync(postToUpdate);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                "Error updating data");
+        }
     }
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePost(int id)

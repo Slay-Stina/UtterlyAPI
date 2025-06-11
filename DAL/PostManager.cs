@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using UtterlyAPI.Models;
 
 namespace UtterlyAPI.DAL;
@@ -29,10 +31,24 @@ public class PostManager
         _utterlyContext.UtterlyPosts.Add(post);
         await _utterlyContext.SaveChangesAsync();
     }
-    public async Task UpdatePostAsync(int id, UtterlyPost post)
+    public async Task<IActionResult> UpdatePostAsync(UtterlyPost post)
     {
-        _utterlyContext.Update(post);
-        await _utterlyContext.SaveChangesAsync();
+        var result = await _utterlyContext.UtterlyPosts
+                .FirstOrDefaultAsync(e => e.Id == post.Id);
+
+        if (result != null)
+        {
+            result.Content = post.Content;
+            result.UserId = post.UserId;
+            result.ThreadId = post.ThreadId;
+            result.ParentPostId = post.ParentPostId;
+            result.CreatedAt = post.CreatedAt;
+
+            await _utterlyContext.SaveChangesAsync();
+
+            return new OkObjectResult(result);
+        }
+        return new NotFoundResult();
     }
     public async Task DeletePostAsync(int id)
     {
